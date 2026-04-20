@@ -69,6 +69,34 @@ object FirebaseService {
     }
 
     /**
+     * Signs in with email/password.
+     * Returns the Firebase UID on success.
+     */
+    suspend fun signInWithEmail(email: String, password: String): String {
+        return try {
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            result.user?.uid ?: throw IllegalStateException("Firebase user is null after sign-in")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to sign in with email", e)
+            throw e
+        }
+    }
+
+    /**
+     * Creates a new account with email/password.
+     * Returns the Firebase UID on success.
+     */
+    suspend fun createUserWithEmail(email: String, password: String): String {
+        return try {
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            result.user?.uid ?: throw IllegalStateException("Firebase user is null after sign-in")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to create user with email", e)
+            throw e
+        }
+    }
+
+    /**
      * Signs out the current user.
      */
     fun signOut() {

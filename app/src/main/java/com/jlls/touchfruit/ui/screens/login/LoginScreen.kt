@@ -27,6 +27,7 @@ fun LoginScreen(
     var codigo by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+    var errorMensaje by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -53,14 +54,14 @@ fun LoginScreen(
                 codigo = it.uppercase()
                 showError = false
             },
-            placeholder = "Ingresa tu código",
+            placeholder = "Ingresa tu código (E1 o R1)",
             modifier = Modifier.fillMaxWidth()
         )
 
         if (showError) {
             Spacer(modifier = Modifier.height(SpacingSm))
             Text(
-                text = "Código no válido. Usa código que empiece con E (emisor) o R (receptor)",
+                text = errorMensaje,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
@@ -76,14 +77,16 @@ fun LoginScreen(
             onClick = {
                 isLoading = true
                 val success = TouchFruitRepository.login(codigo)
-                isLoading = false
                 if (success) {
                     val esEmisor = codigo.startsWith("E")
-                    // Bind Firebase Auth
+                    // Bind Firebase Auth with proper email accounts
                     firebaseSyncService?.onUserLoggedIn(TouchFruitRepository.usuarioActual.value!!)
                     onLoginExito(esEmisor)
+                    isLoading = false
                 } else {
+                    isLoading = false
                     showError = true
+                    errorMensaje = "Código no válido. Usa E1 para Emisor o R1 para Receptor"
                 }
             }
         )
@@ -117,6 +120,11 @@ fun LoginScreen(
                 Text(
                     text = "E1 = Emisor | R1 = Receptor",
                     fontSize = 12.sp,
+                    color = TextSecondary
+                )
+                Text(
+                    text = "Usará cuentas de Firebase reales",
+                    fontSize = 10.sp,
                     color = TextSecondary
                 )
             }

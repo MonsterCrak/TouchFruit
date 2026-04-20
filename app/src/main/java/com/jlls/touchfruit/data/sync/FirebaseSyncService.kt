@@ -79,6 +79,14 @@ class FirebaseSyncService(
     }
 
     /**
+     * Creates the test accounts (emisor and receptor) in Firebase.
+     * Call this once during first launch or from a setup screen.
+     */
+    fun createTestAccounts() {
+        syncManager.createTestAccounts()
+    }
+
+    /**
      * Gets the SyncManager instance for direct operations.
      */
     fun getSyncManager(): SyncManager = syncManager

@@ -176,15 +176,30 @@ class SyncManager(
 
     /**
      * Binds Firebase Auth and starts listening if user is logged in.
+     * Uses email/password authentication for proper Emisor/Receptor linking.
      * If Firebase fails, this is logged but doesn't break the app.
      */
     fun bindFirebaseAuth(usuario: Usuario) {
         scope.launch {
             try {
-                // Sign in anonymously
-                val uid = FirebaseService.signInAnonymously()
+                // Determine email based on role
+                val email = when (usuario.rol) {
+                    RolUsuario.EMISOR -> "emisor@touchfruit.app"
+                    RolUsuario.RECEPTOR -> "receptor@touchfruit.app"
+                }
+                val password = "touchfruit123"
 
-                // Create user document
+                // Try to sign in, if fails try creating the account
+                var uid: String
+                try {
+                    uid = FirebaseService.signInWithEmail(email, password)
+                } catch (e: Exception) {
+                    // Account doesn't exist, create it
+                    Log.d(TAG, "Account not found, creating: $email")
+                    uid = FirebaseService.createUserWithEmail(email, password)
+                }
+
+                // Create or update user document
                 FirebaseService.createUserDocument(
                     uid = uid,
                     codigo = usuario.codigo,
@@ -198,6 +213,26 @@ class SyncManager(
                 Log.d(TAG, "Firebase Auth bound for ${usuario.rol}")
             } catch (e: Exception) {
                 Log.w(TAG, "Firebase Auth failed - continuing in offline mode: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Creates test accounts in Firebase (called once during setup).
+     */
+    fun createTestAccounts() {
+        scope.launch {
+            try {
+                FirebaseService.createUserWithEmail("emisor@touchfruit.app", "touchfruit123")
+                Log.d(TAG, "Emisor test account created")
+            } catch (e: Exception) {
+                Log.d(TAG, "Emisor account may already exist: ${e.message}")
+            }
+            try {
+                FirebaseService.createUserWithEmail("receptor@touchfruit.app", "touchfruit123")
+                Log.d(TAG, "Receptor test account created")
+            } catch (e: Exception) {
+                Log.d(TAG, "Receptor account may already exist: ${e.message}")
             }
         }
     }
