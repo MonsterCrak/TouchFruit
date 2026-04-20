@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "69789197399",
+    "project_id": "touchfruit",
+    "storage_bucket": "touchfruit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69789197399:android:248dfd9ea59af119236f12",
+        "android_client_info": {
+          "package_name": "com.jlls.touchfruit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzpQhTepbT4EnKQ_0kmG7aIYbxfKmTk5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
