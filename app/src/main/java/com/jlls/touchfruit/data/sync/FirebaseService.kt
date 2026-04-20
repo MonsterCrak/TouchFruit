@@ -245,11 +245,11 @@ object FirebaseService {
 
     /**
      * Observes only active (non-completed) pedidos in real-time.
+     * Uses whereIn since Firestore doesn't allow multiple != filters.
      */
     fun observePedidosActivos(): Flow<List<PedidoDocument>> = callbackFlow {
         val listener = db.collection(COLLECTION_PEDIDOS)
-            .whereNotEqualTo("estado", "LISTO")
-            .whereNotEqualTo("estado", "CANCELADO")
+            .whereNotIn("estado", listOf("LISTO", "CANCELADO"))
             .orderBy("enviadoEn", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
