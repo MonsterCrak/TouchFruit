@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "mcp__obsidian-general__list_allowed_directories",
-      "mcp__obsidian-general__list_directory",
-      "WebFetch(domain:www.aitmpl.com)"
-    ]
-  }
-}

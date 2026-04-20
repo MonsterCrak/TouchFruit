@@ -75,3 +75,6 @@ Thumbs.db
 
 # Room
 schemas/
+
+# Claude Code
+.claude/
