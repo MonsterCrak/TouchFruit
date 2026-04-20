@@ -4,5 +4,11 @@
       "anonymous": false,
       "emailPassword": true
     }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "us-east4",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
