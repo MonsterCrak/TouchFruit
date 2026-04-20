@@ -24,6 +24,13 @@ object TouchFruitRepository {
     private val db get() = DatabaseProvider.getDatabase()
 
     // ===============================
+    // FIREBASE SYNC (set from MainActivity)
+    // ===============================
+
+    // Sync manager for Firebase - set by FirebaseSyncService
+    var syncManager: com.jlls.touchfruit.data.sync.SyncManager? = null
+
+    // ===============================
     // PRODUCTOS (in-memory cache for domain model)
     // ===============================
 
@@ -135,6 +142,9 @@ object TouchFruitRepository {
             if (it.id == mesaId) it.copy(estado = EstadoMesa.ABIERTA, sesionId = nuevaSesion.id) else it
         }
 
+        // Sync to Firebase
+        syncManager?.syncSesionToFirebase(nuevaSesion)
+
         return true
     }
 
@@ -168,6 +178,9 @@ object TouchFruitRepository {
         _mesasCache.value = _mesasCache.value.map {
             if (it.id == mesaId) it.copy(estado = EstadoMesa.CERRADA, sesionId = null) else it
         }
+
+        // Sync to Firebase
+        syncManager?.syncSesionCerrada(sesionActiva.id)
     }
 
     // ===============================
@@ -266,6 +279,9 @@ object TouchFruitRepository {
         val domainPedido = nuevoPedido.toDomain(itemEntities, productos)
         _pedidosCache.value = _pedidosCache.value + domainPedido
 
+        // Sync to Firebase
+        syncManager?.syncPedidoToFirebase(domainPedido)
+
         return domainPedido
     }
 
@@ -281,6 +297,9 @@ object TouchFruitRepository {
                 )
             } else it
         }
+
+        // Sync to Firebase
+        syncManager?.syncEstadoToFirebase(pedidoId, nuevoEstado)
     }
 
     suspend fun eliminarPedido(pedidoId: String) {
@@ -371,6 +390,11 @@ object TouchFruitRepository {
         }
         _mesasCache.value = _mesasCache.value.map {
             if (it.id == mesaId) it.copy(estado = EstadoMesa.CERRADA, sesionId = null) else it
+        }
+
+        // Sync to Firebase - close each sesion
+        sesionesActivas.forEach { sesion ->
+            syncManager?.syncSesionCerrada(sesion.id)
         }
     }
 

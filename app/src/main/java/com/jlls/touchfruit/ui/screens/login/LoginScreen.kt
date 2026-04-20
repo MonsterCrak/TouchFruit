@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.jlls.touchfruit.data.repository.TouchFruitRepository
+import com.jlls.touchfruit.data.sync.FirebaseSyncService
 import com.jlls.touchfruit.ui.components.BotonPrincipal
 import com.jlls.touchfruit.ui.components.CampoTexto
 import com.jlls.touchfruit.ui.theme.*
@@ -20,6 +21,7 @@ import com.jlls.touchfruit.ui.theme.*
 
 @Composable
 fun LoginScreen(
+    firebaseSyncService: FirebaseSyncService? = null,
     onLoginExito: (Boolean) -> Unit // true = emisor, false = receptor
 ) {
     var codigo by remember { mutableStateOf("") }
@@ -77,6 +79,8 @@ fun LoginScreen(
                 isLoading = false
                 if (success) {
                     val esEmisor = codigo.startsWith("E")
+                    // Bind Firebase Auth
+                    firebaseSyncService?.onUserLoggedIn(TouchFruitRepository.usuarioActual.value!!)
                     onLoginExito(esEmisor)
                 } else {
                     showError = true

@@ -19,11 +19,15 @@ import com.jlls.touchfruit.ui.screens.receptor.ReportesScreen
 import com.jlls.touchfruit.ui.theme.TouchFruitTheme
 import com.jlls.touchfruit.data.repository.TouchFruitRepository
 import com.jlls.touchfruit.data.local.DatabaseProvider
+import com.jlls.touchfruit.data.sync.FirebaseSyncService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var firebaseSyncService: FirebaseSyncService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,17 +37,21 @@ class MainActivity : ComponentActivity() {
             TouchFruitRepository.loadInitialData()
         }
 
+        // Initialize Firebase Sync Service
+        firebaseSyncService = FirebaseSyncService(TouchFruitRepository)
+        firebaseSyncService.bindToLifecycleOwner(this)
+
         enableEdgeToEdge()
         setContent {
             TouchFruitTheme {
-                TouchFruitApp()
+                TouchFruitApp(firebaseSyncService)
             }
         }
     }
 }
 
 @Composable
-fun TouchFruitApp() {
+fun TouchFruitApp(firebaseSyncService: FirebaseSyncService) {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Login) }
     var isEmisor by remember { mutableStateOf(true) }
     var sesionIdParaResumen by remember { mutableStateOf<String?>(null) }
@@ -51,6 +59,7 @@ fun TouchFruitApp() {
     when (currentScreen) {
         Screen.Login -> {
             LoginScreen(
+                firebaseSyncService = firebaseSyncService,
                 onLoginExito = { esEmisor ->
                     isEmisor = esEmisor
                     currentScreen = if (esEmisor) Screen.EmisorDashboard else Screen.ReceptorDashboard
