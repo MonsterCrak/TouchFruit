@@ -146,6 +146,7 @@ fun DashboardReceptorScreen(
         // Navegación inferior
         NavegacionInferior(
             itemActivo = 0,
+            segundoItemLabel = "Reportes",
             onItemClick = { index ->
                 when (index) {
                     1 -> onVerReportes()
