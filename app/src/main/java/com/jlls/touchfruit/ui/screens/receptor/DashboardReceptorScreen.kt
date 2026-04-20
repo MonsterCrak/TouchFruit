@@ -39,7 +39,6 @@ fun DashboardReceptorScreen(
             .fillMaxSize()
             .background(BgCanvas)
             .padding(SpacingLg)
-            .verticalScroll(scrollState)
     ) {
         // Header
         Row(
@@ -82,28 +81,27 @@ fun DashboardReceptorScreen(
             color = TextSecondary
         )
 
-        Spacer(modifier = Modifier.height(SpacingXl))
+        Spacer(modifier = Modifier.height(SpacingMd))
 
-        // Contenido con pull-to-refresh
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = { viewModel.onRefresh() },
-            modifier = Modifier.weight(1f, fill = false)
-        ) {
-            // Loading indicator inicial
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = ActionBg,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            } else {
+        // Contenido
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = ActionBg,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+            ) {
                 // Card Pedidos Activos
                 TarjetaPastel(
                     titulo = "PEDIDOS ACTIVOS",
@@ -130,7 +128,20 @@ fun DashboardReceptorScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(SpacingMd))
+        // Pull-to-refresh indicator
+        if (isRefreshing) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = ActionBg,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(SpacingSm))
 
         // Navegación inferior
         NavegacionInferior(
