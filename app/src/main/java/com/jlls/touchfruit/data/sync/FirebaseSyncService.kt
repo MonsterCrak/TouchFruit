@@ -66,11 +66,16 @@ class FirebaseSyncService(
     /**
      * Manually bind auth when user logs in.
      * Call this after successful login.
+     * If Firebase fails, the app continues in offline-only mode.
      */
     fun onUserLoggedIn(usuario: Usuario) {
         Log.d(TAG, "Binding Firebase auth for user: ${usuario.codigo}")
-        syncManager.bindFirebaseAuth(usuario)
-        authBound = true
+        try {
+            syncManager.bindFirebaseAuth(usuario)
+            authBound = true
+        } catch (e: Exception) {
+            Log.e(TAG, "Firebase binding failed, continuing in offline mode", e)
+        }
     }
 
     /**

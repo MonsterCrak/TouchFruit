@@ -176,6 +176,7 @@ class SyncManager(
 
     /**
      * Binds Firebase Auth and starts listening if user is logged in.
+     * If Firebase fails, this is logged but doesn't break the app.
      */
     fun bindFirebaseAuth(usuario: Usuario) {
         scope.launch {
@@ -196,7 +197,7 @@ class SyncManager(
 
                 Log.d(TAG, "Firebase Auth bound for ${usuario.rol}")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to bind Firebase Auth", e)
+                Log.w(TAG, "Firebase Auth failed - continuing in offline mode: ${e.message}")
             }
         }
     }
