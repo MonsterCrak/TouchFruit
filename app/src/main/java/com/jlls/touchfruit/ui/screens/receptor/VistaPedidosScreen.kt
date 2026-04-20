@@ -97,9 +97,12 @@ fun VistaPedidosScreen(
         Spacer(modifier = Modifier.height(SpacingMd))
 
         NavegacionInferior(
-            itemActivo = 0,
+            itemActivo = 1,
             onItemClick = { index ->
-                if (index == 2) onCerrarSesion()
+                when (index) {
+                    0 -> onBack()  // Volver al Dashboard
+                    2 -> onCerrarSesion()
+                }
             }
         )
     }
