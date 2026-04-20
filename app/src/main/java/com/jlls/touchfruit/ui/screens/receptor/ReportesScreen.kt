@@ -152,10 +152,15 @@ fun ReportesScreen(
 
         Spacer(modifier = Modifier.height(SpacingMd))
 
+        // Navegación inferior
         NavegacionInferior(
             itemActivo = 1,
+            segundoItemLabel = "Reportes",
             onItemClick = { index ->
-                if (index == 2) onCerrarSesion()
+                when (index) {
+                    0 -> onBack()  // Volver al Dashboard
+                    2 -> onCerrarSesion()
+                }
             }
         )
     }

@@ -34,115 +34,125 @@ fun DashboardReceptorScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val scrollState = rememberScrollState()
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BgCanvas)
+            .padding(SpacingLg)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(SpacingLg)
-                .verticalScroll(scrollState)
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Hola, Receptor",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary
-                )
-                // Badge de notificaciones
-                if (uiState.pedidoCount > 0) {
-                    Surface(
-                        shape = ShapePill,
-                        color = NotificationDot
-                    ) {
-                        Text(
-                            text = "${uiState.pedidoCount}",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ActionFg,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(SpacingSm))
-
             Text(
-                text = if (uiState.pedidoCount > 0) {
-                    "Tienes ${uiState.pedidoCount} pedidos activos"
-                } else {
-                    "Sin pedidos pendientes"
-                },
-                fontSize = 14.sp,
-                color = TextSecondary
+                text = "Hola, Receptor",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary
             )
-
-            Spacer(modifier = Modifier.height(SpacingXl))
-
-            // Contenido con pull-to-refresh
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = { viewModel.onRefresh() },
-                modifier = Modifier.weight(1f, fill = false)
-            ) {
-                // Loading indicator inicial
-                if (uiState.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = ActionBg,
-                            modifier = Modifier.size(48.dp)
-                        )
-                    }
-                } else {
-                    // Card Pedidos Activos
-                    TarjetaPastel(
-                        titulo = "PEDIDOS ACTIVOS",
-                        icono = "📋",
-                        colorFondo = CardGreen,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        onClick = onVerPedidos
-                    )
-
-                    Spacer(modifier = Modifier.height(SpacingMd))
-
-                    // Card Reportes
-                    TarjetaPastel(
-                        titulo = "REPORTES",
-                        icono = "📊",
-                        colorFondo = CardPurple,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        onClick = onVerReportes
+            // Badge de notificaciones
+            if (uiState.pedidoCount > 0) {
+                Surface(
+                    shape = ShapePill,
+                    color = NotificationDot
+                ) {
+                    Text(
+                        text = "${uiState.pedidoCount}",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ActionFg,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(SpacingXl))
-
-            // Navegación inferior
-            NavegacionInferior(
-                itemActivo = 0,
-                onItemClick = { index ->
-                    if (index == 2) onCerrarSesion()
-                }
-            )
         }
+
+        Spacer(modifier = Modifier.height(SpacingSm))
+
+        Text(
+            text = if (uiState.pedidoCount > 0) {
+                "Tienes ${uiState.pedidoCount} pedidos activos"
+            } else {
+                "Sin pedidos pendientes"
+            },
+            fontSize = 14.sp,
+            color = TextSecondary
+        )
+
+        Spacer(modifier = Modifier.height(SpacingMd))
+
+        // Contenido
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = ActionBg,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+            ) {
+                // Card Pedidos Activos
+                TarjetaPastel(
+                    titulo = "PEDIDOS ACTIVOS",
+                    icono = "📋",
+                    colorFondo = CardGreen,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    onClick = onVerPedidos
+                )
+
+                Spacer(modifier = Modifier.height(SpacingMd))
+
+                // Card Reportes
+                TarjetaPastel(
+                    titulo = "REPORTES",
+                    icono = "📊",
+                    colorFondo = CardPurple,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    onClick = onVerReportes
+                )
+            }
+        }
+
+        // Pull-to-refresh indicator
+        if (isRefreshing) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = ActionBg,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(SpacingSm))
+
+        // Navegación inferior
+        NavegacionInferior(
+            itemActivo = 0,
+            segundoItemLabel = "Reportes",
+            onItemClick = { index ->
+                when (index) {
+                    1 -> onVerReportes()
+                    2 -> onCerrarSesion()
+                }
+            }
+        )
     }
 }

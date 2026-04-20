@@ -455,9 +455,10 @@ fun ItemResumenComanda(
 
 @Composable
 fun NavegacionInferior(
-    itemActivo: Int, // 0=Home, 1=Historial, 2=Cerrar
+    itemActivo: Int, // 0=Home, 1=second, 2=Cerrar
     onItemClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    segundoItemLabel: String = "Historial" // customizable label for index 1
 ) {
     Row(
         modifier = modifier
@@ -466,7 +467,7 @@ fun NavegacionInferior(
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        val items = listOf("🏠" to "Home", "📋" to "Historial", "🚪" to "Cerrar")
+        val items = listOf("🏠" to "Home", "📋" to segundoItemLabel, "🚪" to "Cerrar")
         items.forEachIndexed { index, (emoji, label) ->
             val seleccionado = itemActivo == index
             Surface(
