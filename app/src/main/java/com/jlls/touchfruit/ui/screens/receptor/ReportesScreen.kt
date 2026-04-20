@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jlls.touchfruit.data.model.Pedido
+import com.jlls.touchfruit.ui.components.NavegacionInferior
 import com.jlls.touchfruit.ui.theme.*
 import com.jlls.touchfruit.viewmodel.ReceptorViewModel
 
@@ -150,6 +151,18 @@ fun ReportesScreen(
         }
 
         Spacer(modifier = Modifier.height(SpacingMd))
+
+        // Navegación inferior
+        NavegacionInferior(
+            itemActivo = 1,
+            segundoItemLabel = "Reportes",
+            onItemClick = { index ->
+                when (index) {
+                    0 -> onBack()  // Volver al Dashboard
+                    2 -> onCerrarSesion()
+                }
+            }
+        )
     }
 }
 
