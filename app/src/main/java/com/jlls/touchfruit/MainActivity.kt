@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
         firebaseSyncService = FirebaseSyncService(TouchFruitRepository)
         firebaseSyncService.bindToLifecycleOwner(this)
 
+        // Connect SyncManager to Repository so Firebase sync works
+        TouchFruitRepository.syncManager = firebaseSyncService.getSyncManager()
+
         enableEdgeToEdge()
         setContent {
             TouchFruitTheme {
